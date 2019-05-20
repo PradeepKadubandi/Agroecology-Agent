@@ -30,7 +30,7 @@ def simulate(action_list, crop_list):
     elif action == 'watering':
         return water(Plant(str(crop)))
     elif action == 'harvest':
-        return harvest(Plant(str(crop)))
+        return harvest()
 
 
 # Simulator Functions i.e plant, water, harvest.
@@ -49,7 +49,7 @@ def plant(plant_obj):
         if (landscape_grid[cell[0], cell[1]]) is None:
             landscape_grid[cell[0], cell[1]] = plant_obj
             reward_list.append(1)
-        else:
+        else: 
             non_empty_cells.append(cell)
 
     # print len(non_empty_cells)
@@ -64,16 +64,18 @@ def water(plant_obj):
         sample_list.append(random_cell_indices)
     final_cell_list = list(dict.fromkeys(sample_list))
     for cell in final_cell_list:
-        if (landscape_grid[cell[0], cell[1]]).crop_id == plant_obj.crop_id:
+        if (landscape_grid[cell[0], cell[1]]) is not None:
             reward_list.append(0.5)
-        elif (landscape_grid[cell[0], cell[1]]).crop_id is None:
+        else:
             reward_list.append(-0.5)
+        # elif (landscape_grid[cell[0], cell[1]]).crop_id is None:
+        #     reward_list.append(-0.5)
 
     # print len(non_empty_cells)
     return ["Watering action performed", landscape_grid]
 
 
-def harvest(plant_obj):
+def harvest():
     sample_list = []
     no_of_cells = random.randint(1, ((landscape_rows * landscape_cols) + 1))
     non_empty_cells = []
@@ -82,11 +84,13 @@ def harvest(plant_obj):
         sample_list.append(random_cell_indices)
     final_cell_list = list(dict.fromkeys(sample_list))
     for cell in final_cell_list:
-        if (landscape_grid[cell[0], cell[1]]).crop_id == plant_obj.crop_id:
-            landscape_grid[cell[0], cell[1]] = plant_obj
+        if (landscape_grid[cell[0], cell[1]]) is not None:
+            landscape_grid[cell[0], cell[1]] = None
             reward_list.append(1)
-        elif (landscape_grid[cell[0], cell[1]]).crop_id is None:
+        else:
             reward_list.append(-1)
+        # else (landscape_grid[cell[0], cell[1]]).crop_id  None:
+        #     reward_list.append(-1)
     print len(non_empty_cells)
     return ["Harvesting action performed", landscape_grid]
 
@@ -96,7 +100,8 @@ def get_total_reward(rewards):
 
 
 while simulation_time > 0:
+    print "***************** Running Simulation at time: ", simulation_time, "*****************"
     print simulate(actions, crops)
-    print sum(reward_list)
+    print "***************************End of Simulation, points awarded for action is: ", sum(reward_list)
     simulation_time = simulation_time - 1
 
