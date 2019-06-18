@@ -1,4 +1,5 @@
 import numpy as np
+import random
 import environment as env
 
 
@@ -11,33 +12,45 @@ def get_soil_moisture(grid_cell):
     return "10"
 
 
-def perform_action(grid, action):
+def perform_action(land, action):
     # action (name, crop, position) e.g ['planting', 'maize', (0,0)]
     if action[0] == 'planting':
-        if (grid[action[2][0], action[2][1]]) == "None":
-            grid[action[2][0], action[2][1]] == env.Plant(str(action[1]))
-            reward = 10
-            return reward
+        if (land[action[2][0], action[2][1]]).crop_id == "None":
+            (land[action[2][0], action[2][1]]) = env.Plant(str(action[1]))
+            r = 1
+            return r, land
         else:
-            reward = -1
-            return reward
+            r = -1
+
+            return r, land
     elif action[0] == 'harvesting':
-        if (grid[action[2][0], action[2][1]]) == "None":
-            reward = -1
-            return reward
+        if (land[action[2][0], action[2][1]]).crop_id == "None":
+            r = -1
+            return r, land
         else:
-            grid[action[2][0], action[2][1]] == env.Plant("None")
-            reward = 10
-            return reward
+            (land[action[2][0], action[2][1]]).crop_id = env.Plant("None")
+            r = 10
+            return r, land
 
     elif action[0] == 'watering':
-        if get_soil_moisture(grid[action[2][0], action[2][1]]) < 10:
-            reward = 15
-            return reward
+        if get_soil_moisture(land[action[2][0], action[2][1]]) < 10:
+            r = 15
+            return r, land
         else:
-            reward = -2
-            return reward
+            r = -2
+            return r, land
 
 
 my_land = env.Landscape().default_array
-print my_land
+
+for i in range(5):
+    action_list = ['planting', 'harvesting', 'watering']
+    crop_list = ['maize', 'bean']
+    selected_action = random.choice(action_list)
+    selected_crop = random.choice(crop_list)
+    selected_index = random.sample(range(0, 2), 2)
+    reward, grid = perform_action(my_land, [selected_action, selected_crop, selected_index])
+    print selected_action
+    print reward, grid
+
+
