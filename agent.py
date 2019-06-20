@@ -28,21 +28,21 @@ def default_random_select_action():
 
 # Q-LEARNING IMPLEMENTATION
 
-def q_learning_select_action(env_state, time_step):
+def q_learning_select_action(current_state, time_step):
     # select action by looking up the q table
-    action = np.max(q_table[env_state])
+    action = np.max(q_table[current_state])
 
     # get reward from taking the action
-    reward = sim.perform_action(env_state, action)
+    reward = sim.perform_action(current_state, action)
 
     # Max possible q value in the next step
-    max_q_future = np.max(q_table[sim.get_current_state(time_step)])
+    max_q_future = np.max(q_table[sim.get_next_state(time_step)])
 
     # Current Q value
-    current_q = q_table[env_state + (action, )]
+    current_q = q_table[current_state + (action, )]
 
     # Update the new q value
     new_q = (1 - LEARNING_RATE) * current_q + LEARNING_RATE * (reward + DISCOUNT * max_q_future)
-    q_table[env_state + (action, )] = new_q
+    q_table[current_state + (action, )] = new_q
 
     return action
