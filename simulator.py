@@ -1,56 +1,69 @@
-import numpy as np
 import random
+import numpy as np
 import environment as env
-
-
-def print_land(grid):
-    for row in grid:
-        print(row)
-
-
-def get_soil_moisture(grid_cell):
-    return "10"
+import agent as agent
 
 
 def perform_action(land, action):
-    # action (name, crop, position) e.g ['planting', 'maize', (0,0)]
+    """Implements an action to a landscape.
+
+        An action is chosen by different types of agents to be performed on the land.
+
+        Args:
+            land: A 2D array with objects
+            action: A list with items as follows [ action_name, crop_name, index]
+
+        Returns:
+           A list with reward (int), new_land(2D array)
+           """
     if action[0] == 'planting':
         if (land[action[2][0], action[2][1]]).crop_id == "None":
             (land[action[2][0], action[2][1]]) = env.Plant(str(action[1]))
-            r = 1
-            return r, land
-        else:
-            r = -1
-
-            return r, land
+            return [1, land]
+        return [-1, land]
     elif action[0] == 'harvesting':
         if (land[action[2][0], action[2][1]]).crop_id == "None":
-            r = -1
-            return r, land
-        else:
-            (land[action[2][0], action[2][1]]).crop_id = env.Plant("None")
-            r = 10
-            return r, land
+            return [-1, land]
+        return [10, land] if (land[action[2][0], action[2][1]]).stage == 5 else [-1, land]
 
     elif action[0] == 'watering':
-        if get_soil_moisture(land[action[2][0], action[2][1]]) < 10:
-            r = 15
-            return r, land
-        else:
-            r = -2
-            return r, land
+        ideal_water = range(4, 10)
+        if (land[action[2][0], action[2][1]]).crop_id == "None":
+            return [-1, land]
+        return [1, land] if (land[action[2][0], action[2][1]]).water in ideal_water else [-1, land]
 
 
-my_land = env.Landscape().default_array
+# Initialize the landscape area
+MY_LAND = env.Landscape().default_array
 
-for i in range(5):
-    action_list = ['planting', 'harvesting', 'watering']
-    crop_list = ['maize', 'bean']
-    selected_action = random.choice(action_list)
-    selected_crop = random.choice(crop_list)
-    selected_index = random.sample(range(0, 2), 2)
-    reward, grid = perform_action(my_land, [selected_action, selected_crop, selected_index])
-    print selected_action
-    print reward, grid
+# Start Simulation
+for i in range(100):
+    # Agent or human selects an action to perform
+    selected_actions = agent.default_random_select_action()
+    action_result = perform_action(MY_LAND, selected_actions)
+    arr = action_result[1]
+    reward = action_result[0]
+
+    # update landscape status i.e crops status
+    for ix, iy in np.ndindex(arr.shape):
+        if arr[ix, iy].crop_id == "None":
+            pass
+        if arr[ix, iy].crop_id == "maize":
+            arr[ix, iy].stage = random.randint(0, 5)
+            arr[ix, iy].water = random.randint(0, 9)
+
+        if arr[ix, iy].crop_id == "bean":
+            arr[ix, iy].stage = random.randint(0, 9)
+            arr[ix, iy].water = random.randint(0, 9)
+
+    print arr
+    print "Action selected: ", selected_actions[0], " Crop chosen: ", selected_actions[1], \
+        " Location", selected_actions[2], "Reward Received: ", reward
 
 
+def get_current_state():
+    """
+     Returns: The current landscape state at the current simulation time
+    """
+    current_land_state = MY_LAND
+    return current_land_state
