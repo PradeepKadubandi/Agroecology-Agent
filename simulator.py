@@ -33,33 +33,20 @@ def perform_action(land, action):
         return [1, land] if (land[action[2][0], action[2][1]]).water in ideal_water else [-1, land]
 
 
-# Initialize the landscape area
-MY_LAND = env.Landscape().default_array
+def update_landscape(arr):
+    # update landscape status i.e crops status
+    for ix, iy in np.ndindex(arr.shape):
+        if arr[ix, iy].crop_id == "None":
+            pass
+        if arr[ix, iy].crop_id == "maize":
+            arr[ix, iy].stage = random.randint(0, 5)
+            arr[ix, iy].water = random.randint(0, 9)
 
+        if arr[ix, iy].crop_id == "bean":
+            arr[ix, iy].stage = random.randint(0, 9)
+            arr[ix, iy].water = random.randint(0, 9)
 
-# Start Simulation
-# for i in range(100):
-#     # Agent or human selects an action to perform
-#     selected_actions = agent.default_random_select_action()
-#     action_result = perform_action(MY_LAND, selected_actions)
-#     arr = action_result[1] # arr is the new state of the land after performing the action
-#     reward = action_result[0]
-#
-#     # update landscape status i.e crops status
-#     for ix, iy in np.ndindex(arr.shape):
-#         if arr[ix, iy].crop_id == "None":
-#             pass
-#         if arr[ix, iy].crop_id == "maize":
-#             arr[ix, iy].stage = random.randint(0, 5)
-#             arr[ix, iy].water = random.randint(0, 9)
-#
-#         if arr[ix, iy].crop_id == "bean":
-#             arr[ix, iy].stage = random.randint(0, 9)
-#             arr[ix, iy].water = random.randint(0, 9)
-#
-#     print arr
-#     print "Action selected: ", selected_actions[0], " Crop chosen: ", selected_actions[1], \
-#         " Location", selected_actions[2], "Reward Received: ", reward
+    return arr
 
 
 def get_next_state():
@@ -68,6 +55,3 @@ def get_next_state():
     """
     current_land_state = MY_LAND
     return current_land_state
-
-
-print perform_action(MY_LAND, ["planting", "maize", [0, 1z]])
