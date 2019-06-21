@@ -5,7 +5,7 @@ import environment as env
 # Initialize the landscape area
 MY_LAND = env.Landscape().default_array
 # Initialize no. of runs
-RUNS = 100
+RUNS = 10
 
 # Let's start the Game
 
@@ -17,7 +17,7 @@ while RUNS:
     MY_LAND = action_result[1]
     reward = action_result[0]
     next_land_state = sim.update_landscape(MY_LAND)
-    agent.update_agent_q_table(current_state, reward, next_land_state, action_list[0])
-    print next_land_state
+    #agent.update_agent_q_table(current_state, reward, next_land_state, action_list[0])
+    print reward, next_land_state
     RUNS -= 1
 
