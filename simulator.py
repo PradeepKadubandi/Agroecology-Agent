@@ -1,7 +1,6 @@
 import random
 import numpy as np
 import environment as env
-import agent as agent
 
 
 def perform_action(land, action):
@@ -49,9 +48,3 @@ def update_landscape(arr):
     return arr
 
 
-def get_next_state():
-    """
-     Returns: The current landscape state at the current simulation time
-    """
-    current_land_state = MY_LAND
-    return current_land_state
