@@ -25,10 +25,11 @@ def generate_state_list(landscape):
     all_states = list(itertools.product(*landscape_state_def))
     return all_states
 
-
+def q_table_mapping(current_state,action):
+    return generate_state_list(landscape)[current_state],generate_action_list(landscape)[action]
 my_land = Landscape().default_array
-print my_land
-print generate_state_list(my_land)
+# print (my_land)
+print (generate_state_list(my_land)[0])
 
 
 
