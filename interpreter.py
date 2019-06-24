@@ -27,10 +27,6 @@ def generate_state_list(landscape):
 
 
 my_land = Landscape().default_array
-print my_land
-print generate_state_list(my_land)
-
-
 
 
 
