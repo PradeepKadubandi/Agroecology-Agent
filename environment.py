@@ -52,7 +52,9 @@ def state_spaces(landscape_instance):
     states_list = range(1, state_dict_items + 1)
     landscape_state_def = [states_list, CROPS, CROP_STATES]
     all_states = list(itertools.product(*landscape_state_def))
-    return all_states
+    chunks = [all_states[x:x + 10] for x in xrange(0, len(all_states), 10)]
+    new_state_changed = map(list, zip(*chunks))
+    return new_state_changed
 
 
 def action_space(landscape_instance):
@@ -64,7 +66,3 @@ def action_space(landscape_instance):
                 action_list.append(action_vector)
 
     return action_list
-
-
-for i in range(9):
-    print i+1

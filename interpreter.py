@@ -1,7 +1,6 @@
 # TODO(Robin): Add mapping of action index from agent to simulator to perform action
 import itertools
 import numpy as np
-from environment import Landscape
 actions = ['planting', 'harvesting', 'watering']
 crops = ['maize', 'beans']
 crops_states = range(1, 6)
@@ -25,8 +24,6 @@ def generate_state_list(landscape):
     all_states = list(itertools.product(*landscape_state_def))
     return all_states
 
-
-my_land = Landscape().default_array
 
 
 

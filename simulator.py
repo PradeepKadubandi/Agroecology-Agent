@@ -10,26 +10,26 @@ def perform_action(land, action):
 
         Args:
             land: A 2D array with objects
-            action: A list with items as follows [ action_name, crop_name, index]
+            action: A list with items as followsa
 
         Returns:
            A list with reward (int), new_land(2D array)
            """
-    if action[0] == 'planting':
-        if (land[action[2][0], action[2][1]]).crop_id == "None":
-            (land[action[2][0], action[2][1]]) = env.Plant(str(action[1]))
+    if action[1] == 'planting':
+        if (land[action[0][0], action[0][1]]).crop_id == "None":
+            (land[action[0][0], action[0][1]]) = env.Plant(str(action[2]))
             return [1, land]
         return [-1, land]
     elif action[0] == 'harvesting':
-        if (land[action[2][0], action[2][1]]).crop_id == "None":
+        if (land[action[0][0], action[0][1]]).crop_id == "None":
             return [-1, land]
-        return [10, land] if (land[action[2][0], action[2][1]]).stage == 5 else [-1, land]
+        return [10, land] if (land[action[0][0], action[0][1]]).stage == 5 else [-1, land]
 
     elif action[0] == 'watering':
         ideal_water = range(4, 10)
-        if (land[action[2][0], action[2][1]]).crop_id == "None":
+        if (land[action[0][0], action[0][1]]).crop_id == "None":
             return [-1, land]
-        return [1, land] if (land[action[2][0], action[2][1]]).water in ideal_water else [-1, land]
+        return [1, land] if (land[action[0][0], action[0][1]]).water in ideal_water else [-1, land]
 
 
 def update_landscape(arr):
