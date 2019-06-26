@@ -16,14 +16,6 @@ class Plant:
         return self.crop_id
 
 
-def update_plant_stage(attribute, stage):
-    Plant.stage = stage
-
-
-def update_plant_water(attribute, water):
-    Plant.water = water
-
-
 class Landscape:
 
     def __init__(self, location="Los Angeles", size=3):
@@ -48,7 +40,8 @@ class Landscape:
 
 
 def state_spaces(landscape_instance):
-    state_dict_items = landscape_instance.shape[0] * landscape_instance.shape[1]
+    landscape_arr = np.array(landscape_instance)
+    state_dict_items = landscape_arr.shape[0] * landscape_arr.shape[1]
     states_list = range(1, state_dict_items + 1)
     landscape_state_def = [states_list, CROPS, CROP_STATES]
     all_states = list(itertools.product(*landscape_state_def))
@@ -58,8 +51,9 @@ def state_spaces(landscape_instance):
 
 
 def action_space(landscape_instance):
+    land_arr = np.array(landscape_instance)
     action_list = []
-    for index, cell in np.ndenumerate(landscape_instance):
+    for index, cell in np.ndenumerate(land_arr):
         for action in ACTIONS:
             for crop in CROPS:
                 action_vector = [index, action, crop]
