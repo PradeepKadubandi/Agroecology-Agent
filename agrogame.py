@@ -12,7 +12,7 @@ class Game:
         self.duration = duration
         self.episodes = episodes
         self.new_landscape = env.Landscape()
-        #self.landscape_default = self.landscape.default
+        # self.landscape_default = self.landscape.default
         self.game_over = False
 
     def start_simulation(self):
@@ -25,23 +25,26 @@ class Game:
         print game_episodes
 
     def growing_season_simulation(self, duration):
-        player = agent.QLearningAgent(len(self.new_landscape.get_all_states()), len(self.new_landscape.get_all_actions()))
-        epsilon = 0.2
+        player = agent.QLearningAgent(len(self.new_landscape.get_all_states()),
+                                      len(self.new_landscape.get_all_actions()))
         evaluation_value = []
+        epsilon = 0.2
         for i in range(duration):
             current_state = self.new_landscape.state
-            action_selected = player.select_action(current_state, self.new_landscape.all_actions, epsilon)  # an integer value that will be used to index to all action list
+            action_selected = player.select_action(current_state, self.new_landscape.all_actions,
+                                                   epsilon)  # an integer value that will be used to index to all
+            # action list
             # print action_selected
             action_tuple = self.new_landscape.get_all_actions()[action_selected]
-            #print action_tuple
+            # print action_tuple
             new_state = sim.perform_action(self.new_landscape.default, action_tuple)
-            #print new_state
+            # print new_state
             reward = sim.evaluate_landscape(self.new_landscape.default, self.new_landscape.size)
-            #print reward
+            # print reward
             self.new_landscape.default = new_state
             evaluation_value.append(reward)
             next_state = self.get_state()
-            #print next_state, current_state, action_selected, reward
+            # print next_state, current_state, action_selected, reward
             player.update_internal_state(next_state, [current_state, action_selected], reward)
             print self.new_landscape.default
         return evaluation_value, player.q_table
@@ -54,7 +57,3 @@ class Game:
 
         landscape_tup = tuple(landscape_state_list)
         return env.convert_binary_tuple_to_decimal(landscape_tup)
-
-
-
-
