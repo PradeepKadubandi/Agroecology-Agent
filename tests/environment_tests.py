@@ -11,7 +11,7 @@ class Landscape_tests(unittest.TestCase):
         self._test_total_number_of_states_and_actions(multi_plant_landspace, 2 ** 9, 9 * 2 * 2)
 
         # bigger_size_landspace = env.Landscape(size=5)
-        # self._test_total_number_of_states_and_actions(multi_plant_landspace, 2 ** 25, 25 * 2 * 2) # 2 ** 25 = 33554432
+        # self._test_total_number_of_states_and_actions(bigger_size_landspace, 2 ** 25, 25 * 2 * 2) # 2 ** 25 = 33554432
 
     def _test_total_number_of_states_and_actions(self, landscape, expected_states, expected_actions):
         total_states = len(landscape.get_all_states())
