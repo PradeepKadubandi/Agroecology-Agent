@@ -55,13 +55,13 @@ class Landscape:
         :return: a list of all actions
         """
         land_arr = self.default_array
-        all_actions = []
+        total_actions = []
         for index, cell in np.ndenumerate(land_arr):
             for action in self.all_actions:
                 for crop in self.crop_list:
                     action_vector = [index, action, crop]
-                    all_actions.append(action_vector)
+                    total_actions.append(action_vector)
 
-        return all_actions
+        return total_actions
 
 
