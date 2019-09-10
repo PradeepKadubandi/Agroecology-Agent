@@ -88,14 +88,17 @@ class MonteCarloAgent:
             maxsofar=-1
             action=-1
             n=len(node.children)
+
             for i in range(n):
                 child=node.children[i]
-                ucb=99999999999
-                if(child.visits!=0):
-                    ucb=child.score+exploration_constant*np.sqrt(np.log(node.visits)/child.visits)
+                #ucb=np.inf
+                if(child.visits==0):
+                    action = i
+                    break
+                ucb=child.score+exploration_constant*np.sqrt(np.log(node.visits)/child.visits)
                 if(ucb>maxsofar):
                     maxsofar=ucb
-                    action=i
+                    action = i
             actions.append(action)
             node=node.children[action]
 
