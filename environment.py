@@ -15,6 +15,7 @@ class Plant:
         self.crop_id = crop_id
         self.gdd = 0
         self.state = 0
+        self.foodval=0
 
     def __repr__(self):
         return str(self.gdd)
@@ -27,7 +28,7 @@ class Landscape:
         if state_list is None:
             state_list = [0, 1]
         if crop_list is None:
-            crop_list = [1]
+            crop_list = [1,2]
         self.location = location
         self.size = size
         #self.default = [[Plant()] * self.size for _ in range(self.size)]
@@ -38,6 +39,17 @@ class Landscape:
         self.crop_list = crop_list
         self.cells = size * size
         self.state = 0
+
+
+
+        land_arr = self.default_array
+        all_actions = []
+        for index, cell in np.ndenumerate(land_arr):
+            for action in self.all_actions:
+                for crop in self.crop_list:
+                    action_vector = [index, action, crop]
+                    all_actions.append(action_vector)
+        self.all_actions=all_actions
 
     def get_all_states(self):
         """
@@ -54,14 +66,7 @@ class Landscape:
         """
         :return: a list of all actions
         """
-        land_arr = self.default_array
-        all_actions = []
-        for index, cell in np.ndenumerate(land_arr):
-            for action in self.all_actions:
-                for crop in self.crop_list:
-                    action_vector = [index, action, crop]
-                    all_actions.append(action_vector)
 
-        return all_actions
+        return self.all_actions
 
 

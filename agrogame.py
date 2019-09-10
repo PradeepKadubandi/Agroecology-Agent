@@ -4,8 +4,8 @@ import agent as agent
 
 
 class Game:
-    def __init__(self, episodes=None, duration=None, type="q-learning"):
-
+    def __init__(self, episodes=None, duration=None, type="q-learning",size=3):
+        counter=0
         if episodes is None:
             episodes = 10
         if duration is None:
@@ -15,10 +15,11 @@ class Game:
         self.duration = duration
         self.episodes = episodes
 
-        # self.landscape_default = self.landscape.default
+        self.size=size
         self.game_over = False
 
     def start_simulation(self):
+
         game_episodes = {}
 
         total=0
@@ -36,22 +37,25 @@ class Game:
 
                 game_episodes[i]=self.monte_carlo_simulation(player)
                 total+=game_episodes[i]
-                print(total/(i+1))
+
+                if(i%1000==0):
+                    print("average value: "+str(total / (i + 1))+" last value: "+str(game_episodes[i]))
+
 
         print("********************End of game*******************")
-        print (game_episodes)
+        print(game_episodes)
 
     def monte_carlo_simulation(self,player):
-        self.new_landscape = env.Landscape()
+        self.new_landscape = env.Landscape(size=self.size)
 
-        last_node,actions=player.reach_leaf(0.50) #returns last node and all the actions performed
+        last_node,actions=player.reach_leaf(0.1) #returns last node and all the actions performed
         duration_counter=0
 
         num_possible_actions=len(self.new_landscape.get_all_actions())
 
         for action in actions:
             action_tuple = self.new_landscape.get_all_actions()[action]
-            new_state = sim.perform_action(self.new_landscape.default, action_tuple)
+            new_state = sim.perform_action2(self.new_landscape.default, action_tuple)
             self.new_landscape.default = new_state
             duration_counter += 1
 
@@ -59,23 +63,19 @@ class Game:
             #expand
             last_node,action_expanded=player.expand(last_node,num_possible_actions) #returns the final node get reward and action which rollout is chosen
             action_tuple = self.new_landscape.get_all_actions()[action_expanded]
-            new_state = sim.perform_action(self.new_landscape.default, action_tuple)
+            new_state = sim.perform_action2(self.new_landscape.default, action_tuple)
             self.new_landscape.default = new_state
             duration_counter += 1
 
         for i in range(self.duration-duration_counter):
             random_action=player.get_random_action(num_possible_actions)
             action_tuple = self.new_landscape.get_all_actions()[random_action]
-            new_state = sim.perform_action(self.new_landscape.default, action_tuple)
+            new_state = sim.perform_action2(self.new_landscape.default, action_tuple)
             self.new_landscape.default = new_state
 
-        reward = sim.evaluate_landscape(self.new_landscape.default, self.new_landscape.size)[0]
+        reward = sim.evaluate_landscape2(self.new_landscape.default, self.new_landscape.size)[0]
         player.backprop(last_node,reward)
         return reward
-
-
-
-
 
 
 
