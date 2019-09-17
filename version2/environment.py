@@ -17,17 +17,18 @@ class EnvironmentV2(Env):
     '''
     Default_Start_Index = (0, 0)
 
-    def __init__(self, field_size, no_of_crops):
+    def __init__(self, field_size=5, no_of_crops=2):
         self.field_size = field_size
         self.no_of_crops = no_of_crops
-        self.current_index = Default_Start_Index
+        self.current_index = EnvironmentV2.Default_Start_Index
         self.field = np.zeros((field_size, field_size))
         self.action_space = Discrete(no_of_crops)
         self.observation_space = Box(low=0, high=no_of_crops-1, shape=(field_size, field_size), dtype=int)
     
     def reset(self):
-        self.current_index = Default_Start_Index
+        self.current_index = EnvironmentV2.Default_Start_Index
         self.field[:] = 0.0
+        return self.field
 
     def step(self, action):
         self.field[self.current_index] = action # Todo: Do we need to make a new copy?
@@ -43,9 +44,12 @@ class EnvironmentV2(Env):
     def close(self):
         pass
 
-    def render(self):
+    def render(self, mode):
         print (self.field)
-    
+
+    def seed(self, seed=None):
+        return [] # Todo: Should we need to pass a seed?
+
     def __get_reward(self):
         total = 0.0
         for x in range(self.field_size):
