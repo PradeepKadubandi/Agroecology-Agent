@@ -31,6 +31,11 @@ class EnvironmentV2(Env):
         return self.field
 
     def step(self, action):
+        # TODO: Hack to account for action_space allowing values from 0 to n-1
+        # where n is the number of crops however our plant values
+        # being from 1 to n, Need to find a better solution.
+        action = action + 1
+
         self.field[self.current_index] = action # Todo: Do we need to make a new copy?
         done = self.current_index == (self.field_size-1, self.field_size-1)
         reward = 0.0
