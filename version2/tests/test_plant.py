@@ -2,29 +2,47 @@ import pytest
 from version2 import plant
 import numpy as np
 
-class Test_Rewards:
-    def test_empty(self):
-        e = plant.PlantFactory.getPlantInstance(0)
-        assert e.getReward((0, 0), np.zeros((2, 2))) == 0
+@pytest.fixture
+def field():
+    field_size = 5
+    return np.zeros((field_size,field_size))
 
-    def test_bean_surrounded_by_beans(self):
-        field = np.ones((2,2), dtype=int) * plant.PlantType.Bean
-        e = plant.PlantFactory.getPlantInstance(plant.PlantType.Bean)
-        assert e.getReward((0, 0), field) == 10
+class Test_Empty:
+    def test_default_reward(self, field):
+        field_size = field.shape[0]
+        test_plant = plant.Empty((0,0), field_size)
+        assert test_plant.reward == 0.0
 
-    def test_bean_surrounded_by_corn(self):
-        field = np.ones((3,3), dtype=int) * plant.PlantType.Bean
-        field[(0,0)] = plant.PlantType.Corn
-        e = plant.PlantFactory.getPlantInstance(plant.PlantType.Bean)
-        assert e.getReward((1, 1), field) == 15
+# We can write unit tests similarly for other two plants but
+# I am expecting the implementation details will change soon.
+# So for now, only adding this to make sure the code runs as expected.
+class Test_Corn:
+    def test_default_reward(self, field):
+        field_size = field.shape[0]
+        test_plant = plant.Corn((0,0), field_size)
+        assert test_plant.reward == 1.0
 
-    def test_corn_surrounded_by_corn(self):
-        field = np.ones((3,3), dtype=int) * plant.PlantType.Corn
-        e = plant.PlantFactory.getPlantInstance(plant.PlantType.Corn)
-        assert e.getReward((1, 1), field) == 10
+    def test_reward_boost_from_bean(self, field):
+        field_size = field.shape[0]
+        test_plant = plant.Corn((1,1), field_size)
+        field[(1,1)] = plant.PlantType.Corn
+        field[(1,0)] = plant.PlantType.Bean
+        test_plant.process_step(field, 5)
+        assert test_plant.reward == 1.1
 
-    def test_corn_surrounded_by_bean(self):
-        field = np.ones((3,3), dtype=int) * plant.PlantType.Corn
-        field[(0,0)] = field[(2,2)] = plant.PlantType.Bean
-        e = plant.PlantFactory.getPlantInstance(plant.PlantType.Corn)
-        assert e.getReward((1, 1), field) == 12
+    def test_reward_drop_from_bean_early_planting(self, field):
+        field_size = field.shape[0]
+        test_plant = plant.Corn((1,1), field_size)
+        field[(1,1)] = plant.PlantType.Corn
+        field[(1,0)] = plant.PlantType.Bean
+        test_plant.process_step(field, 3)
+        assert test_plant.reward == 0.8
+
+    def test_reward_drop_from_squash(self, field):
+        field_size = field.shape[0]
+        test_plant = plant.Corn((1,1), field_size)
+        field[(1,1)] = plant.PlantType.Corn
+        field[(1,0)] = plant.PlantType.Bean
+        field[(0,1)] = plant.PlantType.Squash
+        test_plant.process_step(field, 5)
+        assert test_plant.reward == 0.7
