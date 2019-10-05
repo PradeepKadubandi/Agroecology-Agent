@@ -36,7 +36,7 @@ So the Environment implementation should model how the state evolves and also th
 ## Key design questions
 For now, I am ignoring the external factors like weather, soil, water etc. With that, 
 
-- There are two key aspects that we want our agents to learn : (1) effective spatial layout and (2) effective temporal structure that results in best yield. (The second aspect can be thought of as abstracting/simplifying the external factors like weather and water in addition to factors like when plants support each other)
+- There are two key aspects that we want our agents to learn : (1) effective spatial layout and (2) effective temporal structure that results in best yield. (The second aspect can be thought of as abstracting/simplifying the external factors like weather and water in addition to factors like when plants support each other) Our reward design should capture both these aspects while (loosely) matching the temporal / spatial relations between plants in effective 3-sisters planting model. 
 
 > Open: Do we need to model 'harvesting' as a possible action for 'Environment'? Harvesting at the right time does not seem to be a complex decistion that agent needs to learn, we can alternately model 'automatic harvesting' within the environment i.e., as time progresses as a plant becomes ready to harvest, the environment automatically harvests the plant and makes the cells empty.
 
