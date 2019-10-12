@@ -7,6 +7,7 @@ Consider single  cell and solve temporal constraints between corn and bean
 - Environment: single cell with state as 2 x 1 vector, first value representing corn and second value bean.
 - ActionSpace: When first value is 0, we have 2 possible actions plant corn or leave empty. Similarly for second value for bean. Note that action space is a function of state space (i.e., available actions change with current state).
 - Reward: Bean when planted after a few days of corn will have higher reward. Corn with bean will have higher reward.
+  - Bean must be planted after 4-6 days Corn is planted to get the growth from corn. The question was whether agent learns this and plants bean a little late.
 - Question: Can an agent learn the above temporal constraint?
   - Start with simple Q-Learning Tabular agent (because the action space and state space is small)
 
