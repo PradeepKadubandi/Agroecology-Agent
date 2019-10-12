@@ -94,7 +94,7 @@ class QLearningAgent:
         self.epsilon = epsilon
 
     def train(self, epochs):
-        print('Training for Epochs {}, using discount factor {}'.format(epochs, self.gamma))
+        print('Training for Epochs {}, using discount factor {}, epsilon {}, learning rate {}'.format(epochs, self.gamma, self.epsilon, self.alpha))
         for _ in range(epochs):
             state = self.env.reset()
             done = False
