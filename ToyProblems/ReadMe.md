@@ -14,5 +14,5 @@ Consider single  cell and solve temporal constraints between corn and bean
 ## Observations / Issues
 - As of now, here are some observations (will improve this section over time):
   - One key question was whether agent figures out planting bean at the right time - so far in any of reward combinations, I couldn't make the agent learn this trick!!! This will be the most interesting insight if proved properly : In RL setting, if there is a situation where for the same (state, action) combination, there is a certain time step in horizon that yields the best reward, can the existing algorithms learn such a phenomenon?
-    - One thing I should try is with sparse rewards (add cumulative growth internally in environment and return the reward only at end of episode, my current implementation uses dense reward model, each day the plant growth is returned as reward.)
+    - Theoritically above makes sense : We cannot expect agent to learn a behavior that depends on 'age' of corn without including 'age' as part of state. At the least we should perhaps treat this problem as a POMDP. ('age' of corn is part of hidden state) , Need to see how tabular Q-learning can be extended to deal with POMDPs (function approaximation is ceratinly one way)
   - When corn without bean has a high reward than corn with bean, agent never plants bean.
