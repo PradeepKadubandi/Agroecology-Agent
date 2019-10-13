@@ -14,7 +14,7 @@ class SingleCellEnv(Env):
     '''
 
     def __init__(self,
-                harvest_period = 10,
+                harvest_period = 30,
                 fert_cost = 0.0,
                 corn_growth_no_support = 0.6,
                 corn_growth_with_fert = 1.0,
