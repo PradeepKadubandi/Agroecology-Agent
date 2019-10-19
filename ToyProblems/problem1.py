@@ -4,6 +4,7 @@ from gym.spaces import Tuple
 from gym.spaces import MultiBinary
 import numpy as np
 import random
+from prettytable import PrettyTable
 
 class SingleCellEnv(Env):
     '''
@@ -30,14 +31,13 @@ class SingleCellEnv(Env):
         self.bean_growth_no_support = bean_growth_no_support
         self.state_space = Tuple((Discrete(2), Discrete(2)))
         self.reset()
-        print('---------------------------------------------------------------------')
+        print('=====================================================================')
         print('Environment Details:')
         print('Reward Style:Dense') # TODO: Need to see what happens if we keep track of growth and return the reward at end of episode i.e, sparse reward.
         print('Reward from Corn only: {}'.format(corn_growth_no_support))
         print('Reward from Corn with bean: {}'.format(corn_growth_with_bean))
         print('Reward from Bean when planted too late or too early: {}'.format(bean_growth_no_support))
         print('Reward from Bean when planted after corn is grown enough: {}'.format(bean_growth_with_support))
-        print('---------------------------------------------------------------------')
 
     def step(self, action):
         done = (self.clock == self.harvest_period)
@@ -59,14 +59,14 @@ class SingleCellEnv(Env):
             if 4 <= self.corn_age <= 6:
                 self.bean_got_support = True
         
-        return self.state, reward, done, None
+        return self.get_state(), reward, done, None
 
     def reset(self):
         self.clock = 0
         self.state = (0, 0)
         self.corn_age = 0
         self.bean_got_support = False
-        return self.state
+        return self.get_state()
 
     def close(self):
         pass
@@ -76,6 +76,10 @@ class SingleCellEnv(Env):
 
     def seed(self, seed=None):
         return []
+
+    def get_state(self):
+        # return self.state
+        return self.state + (self.corn_age,)
 
     @property
     def action_space(self):
@@ -112,6 +116,8 @@ class QLearningAgent:
 
                 self.q_table[state][action] = (1 - self.alpha) * self.q_table[state].get(action, 0.0) + self.alpha * (reward + self.gamma * next_state_value)
                 state = next_state
+        print('Training complete. The resulting q_table:')
+        self.__print_q_table()
 
     def test(self):
         print('Test Run')
@@ -135,7 +141,14 @@ class QLearningAgent:
         print('---------------------------------------------------------------------')
         self.train(epochs)
         self.test()
-        print('---------------------------------------------------------------------')
+
+    def __print_q_table(self):
+        states = sorted(self.q_table.keys())
+        actions = [(0,0), (0,1), (1,0), (1,1)]
+        t = PrettyTable(['state',] + actions)
+        for state in states:
+            t.add_row([state,] + ['N/A' if a not in self.q_table[state] else self.q_table[state][a] for a in actions])
+        print (t)
 
 def main():
     env_specifications = [[0.5, 1.0, 0.7, 0.0],
