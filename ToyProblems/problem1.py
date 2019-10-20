@@ -99,7 +99,8 @@ class QLearningAgent:
 
     def train(self, epochs):
         print('Training for Epochs {}, using discount factor {}, epsilon {}, learning rate {}'.format(epochs, self.gamma, self.epsilon, self.alpha))
-        for _ in range(epochs):
+        for epoch in range(epochs):
+            max_diff = 0.0
             state = self.env.reset()
             done = False
             while not done:
@@ -114,8 +115,14 @@ class QLearningAgent:
                 if state not in self.q_table:
                     self.q_table[state] = {}
 
-                self.q_table[state][action] = (1 - self.alpha) * self.q_table[state].get(action, 0.0) + self.alpha * (reward + self.gamma * next_state_value)
+                oldValue = self.q_table[state].get(action, 0.0)
+                self.q_table[state][action] = (1 - self.alpha) * oldValue + self.alpha * (reward + self.gamma * next_state_value)
+                diff = np.abs(self.q_table[state][action] - oldValue)
+                if (diff > max_diff):
+                    max_diff = diff
                 state = next_state
+            if epoch % 500 == 0:
+                print ('Maximum update for any state,action pair in epoch {}: {}'.format(epoch, max_diff))
         print('Training complete. The resulting q_table:')
         self.__print_q_table()
 
