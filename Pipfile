@@ -13,6 +13,7 @@ tensorflow = "*"
 baselines = {editable = true,git = "https://github.com/openai/baselines"}
 jupyter = "*"
 prettytable = "*"
+matplotlib = "*"
 
 [requires]
 python_version = "3.7"

@@ -99,15 +99,25 @@ class QLearningAgent:
 
     def train(self, epochs):
         print('Training for Epochs {}, using discount factor {}, epsilon {}, learning rate {}'.format(epochs, self.gamma, self.epsilon, self.alpha))
-        for epoch in range(epochs):
+        lr_decay = 0.9
+        epochs_for_decay = 1000
+        print ('Decaying the learning rate by {} every {} epochs'.format(lr_decay, epochs_for_decay))
+        for epoch in range(1, epochs+1):
             max_diff = 0.0
             state = self.env.reset()
             done = False
             while not done:
+                # Why do we need exploitation at all in training phase?
+                # I tried commenting the below block of code and instead use random action always,
+                # however the results are not good. Though I don't know for certain, it seems to me
+                # that the state distribution is not uniform (0, 0, 0) state has a high probability
+                # of occurence and it keeps getting updated with actions values from it's following
+                # states making it a higher value state and so nothing gets planted at test time.
                 if (random.uniform(0, 1) < self.epsilon) or (state not in self.q_table):
                     action = self.env.action_space.sample()
                 else:
                     action = max(self.q_table[state].keys(), key=lambda a:self.q_table[state][a])
+                # action = self.env.action_space.sample()
 
                 next_state, reward, done, info = self.env.step(action)
 
@@ -121,8 +131,9 @@ class QLearningAgent:
                 if (diff > max_diff):
                     max_diff = diff
                 state = next_state
-            if epoch % 500 == 0:
+            if epoch % epochs_for_decay == (epochs_for_decay-1):
                 print ('Maximum update for any state,action pair in epoch {}: {}'.format(epoch, max_diff))
+                self.alpha *= 0.9
         print('Training complete. The resulting q_table:')
         self.__print_q_table()
 
@@ -137,7 +148,7 @@ class QLearningAgent:
             if action[0] == 1 and state[0] == 0:
                 print ('Corn planted at time step {}'.format(time_step))
             if action[1] == 1 and state[1] == 0:
-                print ('Bean planted at time step {}'.format(time_step))
+                print ('Bean planted at time step {} when the age of corn is {}'.format(time_step, state[2]))
             time_step += 1
             next_state, reward, done, info = self.env.step(action)
             total_reward += reward
